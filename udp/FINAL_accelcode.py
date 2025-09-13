@@ -2,6 +2,9 @@ import math as Math
 import socket
 import json
 from collections import deque
+import matplotlib.pyplot as plt
+import signal
+import sys
 
 # UDP setup
 UDP_IP = "0.0.0.0"  # Listen on all interfaces
@@ -17,6 +20,12 @@ decel_thresh = [0, 0.051, 0.102, 0.153, 0.204, 0.256]
 thresh_type = 1
 t_ledpos = 0
 t_samples = 0
+
+d_score = 0
+d_analysis_score = []
+d_analysis_time = []
+
+
 print("Listening for UDP data...")
 
 skip_first = True
@@ -38,6 +47,24 @@ prev_time = None
 prev_accelX_avg = None
 prev_accelY_avg = None
 prev_accelZ_avg = None
+
+def plot_and_exit(signum, frame):
+    print("\nTerminating and plotting score graph...")
+    if len(d_analysis_time) > 0 and len(d_analysis_score) > 0:
+        plt.figure(figsize=(10, 6))
+        plt.plot(d_analysis_time, d_analysis_score, marker='o')
+        plt.xlabel("Time (ms)")
+        plt.ylabel("Score (avg per 10 samples)")
+        plt.title("Score vs Time")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig("score_vs_time.png")
+        plt.show()
+    else:
+        print("No data to plot.")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, plot_and_exit)
 
 while True:
     data_bytes, addr = sock.recvfrom(4096)
@@ -135,6 +162,13 @@ while True:
 
     t_ledpos += led_output
     t_samples += 1
+
+    if (t_samples % 10) == 0:
+        # take average of the past 10 samples
+        d_analysis_score.append(d_score / 10)
+        d_analysis_time.append(accelTime)
+        d_score = 0
+
     score = t_ledpos / t_samples if t_samples > 0 else 0
     score = (19/16) * score
     if score > 100:
@@ -142,6 +176,7 @@ while True:
     if score < 0:
         score = 0
     score = int(score)
+    d_score += score
 
     print(f"led_pos: {smoothed_led_pos}, thresh_type: {thresh_type}, score: {score}")
 
