@@ -3,7 +3,7 @@
 #include <PubSubClient.h>
 
 
-unsigned int localPort = 8000;
+unsigned int localPort = 1883;
 const char *ssid = "shado";
 const char *password = "poopypoo";
 const char* broker = "broker.hivemq.com";
@@ -43,23 +43,22 @@ void setupWifi(){
     delay(500); Serial.print(F("."));
   }
   //init
-  client.setServer(broker, 1883);
+  client.setServer(broker, localPort);
   client.setCallback(callback);
 }
 
 void setup() {
-  pinMode(2, OUTPUT);
   Serial.begin(115200);
+  delay(500);
+  pinMode(2, OUTPUT);
   setupWifi();
  }
 
-void loopMQTTServer(){
-  delay(500);
-  Serial.print("[Server Connected] ");
-  Serial.println (WiFi.localIP());
-}
-
 void loop() {
+  if (!client.connected()) reconnect();
+  client.loop();
+
   Serial.println("[Server running] ");
-  loopMQTTServer();
+  delay(500);
+  Serial.println (WiFi.localIP());
 }
