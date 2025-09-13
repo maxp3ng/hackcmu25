@@ -20,4 +20,4 @@
     }
 </script>
 
-<button onclick={ipClick} class="absolute right-10 top-5 flex"> {ip} </button>
+<button onclick={ipClick} class="right-10 top-5 flex"> {ip} </button>

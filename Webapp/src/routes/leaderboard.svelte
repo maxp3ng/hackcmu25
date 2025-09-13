@@ -1,6 +1,6 @@
 <script>
  let scores = [
-    { name: "Alice", score: 120 },
+    { name: "Alex", score: 120 },
     { name: "Bob", score: 95 },
     { name: "Charlie", score: 80 },
     { name: "Dana", score: 60 }
