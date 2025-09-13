@@ -34,19 +34,26 @@ while True:
     except Exception as e:
         print(f"Error decoding data: {e}")
         continue
+    
+    gravityX = data["gravityX"]
+    gravityY = data["gravityY"]
+    gravityZ = data["gravityZ"]
 
-    accelX = data["accelX"]
-    accelY = data["accelY"]
-    accelZ = data["accelZ"] + 1
+
+
+    accelX = data["accelX"] - gravityX
+    accelY = data["accelY"] - gravityY
+    accelZ = data["accelZ"] - gravityZ
     gyroX = data["gyroX"]
     gyroY = data["gyroY"]
     gyroZ = data["gyroZ"]
     gyroTime = data["gyroTime"]
 
+
     dot = accelX*gyroX + accelY*gyroY + accelZ*gyroZ
     accel_magnitude = Math.sqrt(accelX*accelX + accelY*accelY + accelZ*accelZ)
 
-    led_pos = 3  # Reset for each packet
+    led_pos = 0  # Reset for each packet
 
     if dot >= 0:   # accelerating
         if thresh_type == 1:
@@ -77,10 +84,10 @@ while True:
     score = int(score)
 
     #print the acceleration magnitude and the x,y,x acceleration values
-    print(f"accel magnitude: {accel_magnitude:.3f}, dot: {dot:.3f} ")
-    print(f"accel magnitude: {accel_magnitude:.3f}, accelX: {accelX:.3f}, accelY: {accelY:.3f}, accelZ: {accelZ:.3f}")
+    #print(f"accel magnitude: {accel_magnitude:.3f}, dot: {dot:.3f} ")
+    #print(f"accel magnitude: {accel_magnitude:.3f}, accelX: {accelX:.3f}, accelY: {accelY:.3f}, accelZ: {accelZ:.3f}")
 
     print(f"led_pos: {led_pos}, thresh_type: {thresh_type}, score: {score}")
-    print(f"accelerating: {dot > 0}, thresh_type: {thresh_type}, led_pos: {led_pos}")
+    #print(f"accelerating: {dot > 0}, thresh_type: {thresh_type}, led_pos: {led_pos}")
 
     
