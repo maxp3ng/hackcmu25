@@ -9,5 +9,6 @@ sock.bind((UDP_IP, UDP_PORT))
 print(f"Listening on UDP {UDP_PORT}...")
 while True:
     data, addr = sock.recvfrom(1024)
-    print(f"Received: {data.decode()} from {addr}")
+    print(data.decode())
+    print(addr)
     sock.sendto(b"Echo: " + data, addr)
