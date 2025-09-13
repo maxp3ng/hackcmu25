@@ -17,8 +17,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived: ");
   Serial.println(msg);
 
-  if (msg == "LED_ON") digitalWrite(2, HIGH);
-  if (msg == "LED_OFF") digitalWrite(2, LOW);
+  //alex edit these 
+  if (msg == "LED_0") digitalWrite(2, HIGH);
+  if (msg == "LED_1") digitalWrite(2, HIGH);
+  if (msg == "LED_2") digitalWrite(2, HIGH);
+  if (msg == "LED_3") digitalWrite(2, HIGH);
+  if (msg == "LED_4") digitalWrite(2, HIGH);
+  if (msg == "LED_5") digitalWrite(2, HIGH);
 }
 
 void reconnect() {
