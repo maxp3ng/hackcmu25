@@ -4,7 +4,7 @@ import json
 
 # UDP setup
 UDP_IP = "0.0.0.0"  # Listen on all interfaces
-UDP_PORT = 0 #5005     # Change to your port
+UDP_PORT = 4210 #5005     # Change to your port
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
@@ -14,7 +14,8 @@ accel_thresh2 = [0, 0.0345, 0.0688, 0.1033, 0.1378, 0.206]
 decel_thresh = [0, 0.051, 0.102, 0.153, 0.204, 0.256]
 
 thresh_type = 1
-
+t_ledpos = 0
+t_samples = 0
 print("Listening for UDP data...")
 
 skip_first = True
@@ -36,10 +37,10 @@ while True:
 
     accelX = data["accelX"]
     accelY = data["accelY"]
-    accelZ = data["accelZ"]
+    accelZ = data["accelZ"] + 1
     gyroX = data["gyroX"]
     gyroY = data["gyroY"]
-    gyroZ = data["gyroZ"] + 1
+    gyroZ = data["gyroZ"]
     gyroTime = data["gyroTime"]
 
     dot = accelX*gyroX + accelY*gyroY + accelZ*gyroZ
@@ -51,7 +52,7 @@ while True:
         if thresh_type == 1:
             while led_pos <= 5 and accel_magnitude > accel_thresh1[led_pos]:
                 led_pos += 1
-            if led_pos < 3:
+            if led_pos < 2:
                 thresh_type = 2
         if thresh_type == 2:
             while led_pos <= 5 and accel_magnitude > accel_thresh2[led_pos]:
@@ -64,6 +65,22 @@ while True:
 
     if led_pos > 6:
         led_pos = 6
+    
+    t_ledpos += led_pos
+    t_samples += 1
+    score = t_ledpos / t_samples if t_samples > 0 else 0
+    score *= (19/16) * score
+    if (score > 100):
+        score = 100
+    elif (score < 0):
+        score = 0
+    score = int(score)
 
-    print(f"dot: {dot}, accel magnitude: {accel_magnitude}")
+    #print the acceleration magnitude and the x,y,x acceleration values
+    print(f"accel magnitude: {accel_magnitude:.3f}, dot: {dot:.3f} ")
+    print(f"accel magnitude: {accel_magnitude:.3f}, accelX: {accelX:.3f}, accelY: {accelY:.3f}, accelZ: {accelZ:.3f}")
+
+    print(f"led_pos: {led_pos}, thresh_type: {thresh_type}, score: {score}")
     print(f"accelerating: {dot > 0}, thresh_type: {thresh_type}, led_pos: {led_pos}")
+
+    
