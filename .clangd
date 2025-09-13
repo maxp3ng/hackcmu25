@@ -1,0 +1,12 @@
+CompileFlags:
+  Add:
+    # Use the exact paths from your find command above
+    - -I/home/maxp/.platformio/packages/framework-arduinoespressif32/cores/esp32
+    - -I/home/maxp/.platformio/packages/framework-arduinoespressif32/variants/esp32s3
+    - -I/home/maxp/.platformio/packages/toolchain-xtensa-esp32s3/xtensa-esp32s3-elf/include
+    - -DARDUINO=10819
+    - -DESP32
+    - -std=gnu++17
+
+Diagnostics:
+  Suppress: "*"
